@@ -1,0 +1,120 @@
+﻿
+
+@media (min-width: 960px){
+    .article-normal{
+        display: inline-block;
+        text-align: left;
+        height:90vh;
+        width: auto;
+    }
+    /* Article (For Scrolling)*/
+    .article {
+        flex-direction: column;
+        text-align: left;
+        height: 90vh;
+    }
+
+        .article h1 {
+            position: relative;
+            top: 2em;
+        }
+
+    /* Heading Container */
+    .headingcontainer {
+        width: 100%;
+        height: 15em;
+    }
+
+        /* Heading Txt */
+        .headingcontainer h1 {
+            color: #ecf0f1;
+            font-weight: 600;
+            text-align: left;
+            margin-left: 21%;
+            padding-left: 21%;
+            width:calc(100%-15em);
+        }
+
+        /* Image */
+        .headingcontainer .profileimg {
+            float: left;
+            width: 15em;
+        }
+
+    /* P1 */
+    .article-normal p1 {
+        color: #bdc3c7;
+        font-size: 19px;
+        text-align: left;
+        position: relative;
+        display: inline-flex;
+        margin-left:16.8em;
+        padding-bottom:1em;
+        top: -2rem;
+    }
+    .article-thin{
+        display: none;
+    }
+}
+
+@media (max-width: 960px){
+    .article-normal {
+        display: inline-block;
+        text-align: left;
+        height: 90vh;
+        width: auto;
+    }
+    /* Article (For Scrolling)*/
+    .article {
+        flex-direction: column;
+        text-align: left;
+        height: 90vh;
+    }
+
+        .article h1 {
+            position: relative;
+            top: 2em;
+        }
+
+    /* Heading Container */
+    .headingcontainer {
+        width: 100%;
+        height: 15em;
+    }
+
+        /* Heading Txt */
+        .headingcontainer h1 {
+            color: #ecf0f1;
+            font-weight: 600;
+            text-align: center;
+            margin-left: 5rem;
+            padding-left: 21%;
+            width: calc(100%-15rem);
+        }
+
+        /* Image */
+        .headingcontainer .profileimg {
+            float: left;
+            width: 15rem;
+        }
+
+    /* P1 */
+    .article-normal p1 {
+        color: #bdc3c7;
+        font-size: 19px;
+        text-align: left;
+        position: relative;
+        display: inline-flex;
+        margin-left: 1rem;
+        margin-right: 1em;
+        margin-top:2em;
+        top: 0px;
+    }
+
+    .article-thin {
+        display: none;
+    }
+    .article-thin {
+        display: none;
+    }
+}

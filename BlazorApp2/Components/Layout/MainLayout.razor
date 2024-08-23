@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <article class="content">
+            @Body
+        </article>
+        <div class="bottom-row" style="position: absolute;bottom: 0;margin-top: auto;">
+            <span class="large-content"><a href="https://github.com/dotnet/blazor-samples/blob/main/LICENSE.md" target="_blank" style="margin-left:-50em;margin-right: auto;position:relative;line-height:1em;top:1vh;">Creative Commons Attribution 4.0 International</a></span>
+            <span class="small-content"><a href="https://github.com/dotnet/blazor-samples/blob/main/LICENSE.md" target="_blank" style="margin-right: auto;margin-left: 0;position:relative; line-height:1em; top:1vh;">License</a></span>
+            
+        </div>
+
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
