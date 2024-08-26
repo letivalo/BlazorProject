@@ -37,6 +37,7 @@ main {
 
 @media (max-width: 960px) {
     .bottom-row .large-content {
+        text-align:left;
         display: none;
     }
     .bottom-row .small-content {
@@ -47,10 +48,10 @@ main {
 @media (min-width: 960px) {
     .bottom-row .large-content {
         display: block;
-        width: calc(103vw-250px);
+        width: calc(100vw - 250px);
         height: 5vh;
-        margin-right: -2%;
-        margin-left:calc(-3%+250px);
+        text-align: left;
+        padding-left:1rem;
     }
     .bottom-row .small-content {
         display: none;
@@ -59,7 +60,6 @@ main {
 
     .bottom-row ::deep a, .bottom-row ::deep .btn-link {
         white-space: nowrap;
-        margin-left: 1.5rem;
         text-decoration: none;
 
     }
@@ -113,11 +113,6 @@ main {
                 text-align: right;
                 width: 0;
             }
-
-        .bottom-row, article {
-            padding-left: 2rem;
-            padding-right: 1.5rem;
-        }
     }
 
     #blazor-error-ui {
