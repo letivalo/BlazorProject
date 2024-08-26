@@ -5,6 +5,21 @@ html, body {
     overflow:hidden;
 }
 
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100vw;
+    overflow-y: auto;
+}
+
+main {
+    margin-left: auto;
+    margin-right: auto;
+    overflow-y: auto;
+}
+
 .background-container {
     background-image: url('pexels-markusspiske-113338.jpg');
     background-size: cover;
@@ -61,9 +76,12 @@ a, .btn-link {
 
 .content {
     display: flex;
-    flex-direction:column;
-    width:auto;
+    flex-direction: column;
+    width: auto;
     height: 95vh;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 3%;
 }
 
 h1:focus {

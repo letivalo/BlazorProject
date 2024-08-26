@@ -3,9 +3,37 @@
 
 <PageTitle>Project Demo</PageTitle>
 
-<h1>Project Demo</h1>
-<p1>This page is loaded in InteractiveAuto on the client side. The demo project is a small to-do list application demonstrating user interaction and database operations.</p1>
+<div class="article">
+    <div class="headingcontainer">
+        <img src="/icons/projectdemo.svg" class="aboutprojectimg"/><h1>To-Do List Demo</h1>
+        <h3>(@todos.Count(todo => !todo.IsDone)) Tasks Currently In Progress</h3>
+    </div>
+<ul>
+    @foreach (var todo in todos)
+    {
+        <li>
+            <input type="checkbox" @bind="todo.IsDone" />
+            <input type="text" @bind="todo.Title" />
+        </li>
+    }
+</ul>
+
+</div>
+
+<!-- Task input kept outside of Article div for spacing -->
+<input class="createTask" type="text" @bind="newTodo" />
+<button  @onclick="AddTodo">Create Task</button>
 
 @code {
+    private List<ToDoItem> todos = new();
+    string newTodo = "";
 
+    void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new ToDoItem { Title = newTodo });
+            newTodo = string.Empty;
+        }
+    }
 }
