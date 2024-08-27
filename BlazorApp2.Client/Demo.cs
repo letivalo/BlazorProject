@@ -1,8 +1,9 @@
-﻿namespace BlazorApp2.Client
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlazorApp2.Models;
+
+public class ToDoItem
 {
-    public class ToDoItem
-    {
-        public string? Title { get; set; }
-        public bool IsDone { get; set; } = false;
-    }
+    public string? Title { get; set; }
+    public bool IsDone { get; set; } = false;
 }
