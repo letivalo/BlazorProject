@@ -11,7 +11,7 @@
 *.sln.docstates
 
 # Ignore everything in the nested Properties folder
-BlazorApp2/Properties/*
+BlazorApp2/BlazorApp2/Properties/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
