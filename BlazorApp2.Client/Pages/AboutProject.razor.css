@@ -1,4 +1,4 @@
-﻿@media (min-width:960px){
+﻿@media (min-width:960px) {
     /* Article (For Scrolling)*/
     .article {
         display: flex;
@@ -33,7 +33,7 @@
         }
 
     /* P1 */
-    main p{
+    main p {
         color: #bdc3c7;
         font-size: 19px;
         padding-bottom: 1rem;
@@ -42,7 +42,7 @@
         padding-right: 3vh;
         position: relative;
         top: -2.8em;
-        margin-bottom:0px;
+        margin-bottom: 0px;
     }
 }
 
@@ -80,6 +80,3 @@
             width: 12em;
         }
 }
-
-
-
