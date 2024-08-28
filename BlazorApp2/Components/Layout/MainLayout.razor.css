@@ -1,3 +1,23 @@
+.bottom-row {
+    background-color: rgba(0,0,0,.2);
+    backdrop-filter: blur(7px); /* Frosted glass effect */
+    box-shadow: 0px 0px 50px 7px #212529 inset; /* Shadow Text*/
+    justify-content: flex-start;
+    height: 5vh;
+    width: calc(100vw - 250px);
+    text-align:left;
+    position: absolute;
+    top:95vh;
+    bottom: 0;
+}
+
+@media(max-width:640px){
+    .bottom-row{
+        width:100vw;
+        top:96.6vh;
+    }
+}
+
 .page {
     position: relative;
     display: flex;
@@ -24,70 +44,46 @@ main {
     background-image: linear-gradient(180deg, #013220 0%, #8F9779 100%);
 }
 
-.bottom-row {
-    background-color: rgba(0,0,0,.2);
-    backdrop-filter: blur(7px); /* Frosted glass effect */
-    box-shadow: 0px 0px 50px 7px #212529 inset; /* Shadow Text*/
-    margin-top: 5vh;
-    justify-content: flex-end;
-    height: 5vh;
-    width: 100vw;
-    align-items: center;
+
+.linkimgs{
+    width:1.5rem;
+    margin-right:1rem;
+    position:relative;
+    float:right;
+    top:0.4rem;
 }
 
-@media (max-width: 960px) {
-    .bottom-row .large-content {
-        text-align:left;
-        display: none;
-    }
-    .bottom-row .small-content {
-        display: flex;
-    }
+.githubimg {
+    float:left;
+    width: 1.5rem;
+    margin-right: 0.6rem;
+    position: relative;
+    left:1rem;
+    top: 0.4rem;
 }
 
-@media (min-width: 960px) {
-    .bottom-row .large-content {
-        display: block;
-        width: calc(100vw - 250px);
-        height: 5vh;
-        text-align: left;
-        padding-left:1rem;
-    }
-    .bottom-row .small-content {
-        display: none;
-    }
+.githublink {
+    align-items: start;
+    position: relative;
+    line-height: 5vh;
+    padding-left:1.2rem;
+    text-align: left
 }
 
-    .bottom-row ::deep a, .bottom-row ::deep .btn-link {
-        white-space: nowrap;
-        text-decoration: none;
+.bottom-row ::deep a, .bottom-row ::deep .btn-link {
+    white-space: nowrap;
+    text-decoration: none;
+}
 
-    }
+.bottom-row ::deep a:hover, .bottom-row ::deep .btn-link:hover {
+    text-decoration: underline;
+}
 
-    .bottom-row ::deep a:hover, .bottom-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
+.bottom-row ::deep a:first-child {
+    text-overflow: ellipsis;
+}
 
-    .bottom-row ::deep a:first-child {
-        text-overflow: ellipsis;
-    }
 
-    @media (max-width: 640.98px) {
-        .bottom-row {
-            justify-content: space-between;
-            width: 100vw;
-        }
-
-            .bottom-row ::deep a, .bottom-row ::deep .btn-link {
-                margin-left: 0;
-            }
-
-        .bottom-row {
-            /*margin-top:auto;*/
-        }
-
- 
-    }
 
     @media (min-width: 641px) {
         .page {
@@ -101,18 +97,6 @@ main {
             position: sticky;
             top: 0;
         }
-
-        .bottom-row {
-            width: calc(100vw - 250px);
-            top: 0;
-            left: 250px;
-        }
-
-            .bottom-row.auth ::deep a:first-child {
-                flex: 1;
-                text-align: right;
-                width: 0;
-            }
     }
 
     #blazor-error-ui {

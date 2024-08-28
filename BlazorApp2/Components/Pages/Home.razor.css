@@ -32,7 +32,7 @@
             text-align: left;
             margin-left: 21%;
             padding-left: 21%;
-            width:calc(100%-15em);
+            width:auto;
         }
 
         /* Image */
