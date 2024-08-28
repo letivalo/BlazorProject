@@ -9,7 +9,7 @@
     }
 }
 
-<div class="collapsibleSection" style="position:relative;top:-2.5em;">
+<div class="collapsibleSection" style="position:relative;top:-2.5em;height:auto;">
     <button @onclick="ToggleCollapse" class="collapsible">@Title</button>
     <div class="content" style="display:@(isCollapsed ? "none" : "block")">
         @ChildContent
@@ -36,4 +36,8 @@
         .active, .collapsible:hover {
             background-color: rgba(0,0,0,0.5);
         }
+
+    .background-container .frosted-glass .page main .content .article .collapsibleSection .content {
+        height: auto;
+    }
 </style>
