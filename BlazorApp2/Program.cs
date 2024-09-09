@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.OpenApi;
 using System;
 using BlazorApp2.Client;
 
+
 namespace BlazorApp2
 {
     public class Program
@@ -14,6 +15,7 @@ namespace BlazorApp2
 
             // Add services to the container.
             builder.Services.AddHttpClient();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseAddress"]) });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddRazorComponents()
@@ -81,7 +83,8 @@ namespace BlazorApp2
             .WithOpenApi();
 
             // SQL POST ENDPOINT
-            app.MapPost("/Todos", async (Todos newTask) => {
+            app.MapPost("/Todos", (Todos newTask) =>
+            {
                 using var conn = new SqlConnection(connectionString);
                 conn.Open();
 
