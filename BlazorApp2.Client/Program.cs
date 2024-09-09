@@ -11,4 +11,11 @@ namespace BlazorApp2.Client
             await builder.Build().RunAsync();
         }
     }
+
+    public class Todos
+    {
+        public int ID { get; set; }  // Make sure this property exists
+        public string? Title { get; set; }
+        public bool IsDone { get; set; } = false;
+    }
 }
