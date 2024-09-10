@@ -12,7 +12,7 @@ namespace BlazorApp2.Client
         }
     }
 
-    public class Todos
+    public class UserEntryModel
     {
         public int ID { get; set; }  // Make sure this property exists
         public string? Title { get; set; }

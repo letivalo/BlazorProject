@@ -1,9 +1,9 @@
-using BlazorApp2.Components;
-using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.OpenApi;
-using System;
+using BlazorApp2.Components; // Import components for the Blazor app
+using Microsoft.Data.SqlClient; // SQL Client to interact with SQL Server
+using Microsoft.AspNetCore.OpenApi; // For OpenAPI (Swagger) support
+using System; // Import system base libraries
 using BlazorApp2.Client;
-
+using System.Data; // Import the Blazor client components
 
 namespace BlazorApp2
 {
@@ -13,118 +13,139 @@ namespace BlazorApp2
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the dependency injection container
+
+            // Add HttpClient service to allow HTTP requests
             builder.Services.AddHttpClient();
+
+            // Configure HttpClient with a base address from configuration (e.g., appsettings.json)
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseAddress"]) });
+
+            // Add support for API documentation and exploration via Swagger/OpenAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Register Razor components and enable both server and web assembly modes for interactivity
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
 
+            // Register SQL connection string using dependency injection (gets value from appsettings.json)
+            var connectionString = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            builder.Services.AddScoped(_ => new SqlConnection(connectionString)); // Register SqlConnection with DI
+
+            // Build the application pipeline
             var app = builder.Build();
 
-            // Middleware configuration, e.g., Swagger, static files, etc.
-            if (app.Environment.IsDevelopment())
+            // Call middleware configuration method (defined below)
+            ConfigureMiddleware(app);
+
+            // Map GET endpoint to fetch todos from the database
+            app.MapGet("/Todos", async (SqlConnection conn) =>
             {
-                app.UseWebAssemblyDebugging();
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
+                // List to store fetched to-do items
+                var todos = new List<UserEntryModel>();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseAntiforgery();
+                // Open a connection to the SQL database
+                await conn.OpenAsync();
 
-            // Set connection string equal to the one defined in appsettings.json to authenticate before proceeding
-            string connectionString = app.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
+                // SQL command to fetch ID, Title, and IsDone status from Todos table
+                using var command = new SqlCommand("SELECT ID, Title, IsDone FROM Todos", conn);
 
-            // Open Connection to SQL server based on connection string.
-            using var conn = new SqlConnection(connectionString);
-                conn.Open();
+                // Execute the SQL command and read the results
+                using SqlDataReader reader = await command.ExecuteReaderAsync();
 
-                // If table Todos does not already exist, create the table.
-                var checkTableCmd = new SqlCommand(
-                    // ID value is set to an IDENTITY column by SQL here, meaning each value should automatically be assigned an ID.
-                    "IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Todos') CREATE TABLE Todos (ID int NOT NULL PRIMARY KEY IDENTITY, Title varchar(255), IsDone varchar(255));",
-                    conn);
-                checkTableCmd.ExecuteNonQuery();
-
-            // SQL GET ENDPOINT
-            app.MapGet("/Todos", () => {
-                var todos = new List<Todos>();
-
-                using var conn = new SqlConnection(connectionString);
-                conn.Open();
-
-                var command = new SqlCommand("SELECT ID, Title, IsDone FROM Todos", conn);
-                using SqlDataReader reader = command.ExecuteReader();
-
+                // If there are rows, read each row and add to the todo list
                 if (reader.HasRows)
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
-                        todos.Add(new Todos
+                        todos.Add(new UserEntryModel
                         {
-                            ID = reader.GetInt32(0),
-                            Title = reader.GetString(1),
-                            IsDone = reader.GetString(2) == "1" // Assuming "1" means true and "0" means false
+                            ID = reader.GetInt32(0),        // Get ID (int)
+                            Title = reader.GetString(1),    // Get Title (string)
+                            IsDone = reader.GetBoolean(2)   // Get IsDone status (boolean from SQL 'bit')
                         });
                     }
                 }
-                return todos;
+                return todos; // Return the list of todos
             })
-            .WithName("GetTodos")
-            .WithOpenApi();
+            .WithName("GetTodos") // Name the API route for clarity
+            .WithOpenApi(); // Enable OpenAPI documentation
 
-            // SQL POST ENDPOINT
-            app.MapPost("/Todos", (Todos newTask) =>
+            // Map POST endpoint to add a new todo item
+            app.MapPost("/Todos", async (UserEntryModel UserInput, SqlConnection conn) =>
             {
-                using var conn = new SqlConnection(connectionString);
-                conn.Open();
+                // Open the SQL connection
+                await conn.OpenAsync();
 
-                var command = new SqlCommand(
-                    "INSERT INTO Todos (Title, IsDone) VALUES (@Title, @IsDone)",
-                    conn);
+                // SQL command to insert a new to-do item with Title and IsDone status
+                using var command = new SqlCommand(
+                    "INSERT INTO Todos (Title, IsDone) VALUES (@Title, @IsDone)", conn);
 
-                command.Parameters.Clear();
-                command.Parameters.AddWithValue("@Title", newTask.Title);
-                command.Parameters.AddWithValue("@Isdone", newTask.IsDone);
+                // Why is this a duplication of the need to create UserInputSubmission in Demo.razor?
+                command.Parameters.AddWithValue("@Title", UserInput.Title); // Bind title
+                command.Parameters.AddWithValue("@IsDone", UserInput.IsDone ? 1 : 0); // Convert boolean to 1/0 for SQL
 
-                command.ExecuteNonQuery();
+                // Execute the insert command
+                await command.ExecuteNonQueryAsync();
+                
             })
-            .WithName("CreateTodos")
-            .WithOpenApi();
+            .WithName("CreateTodos") // Name the API route
+            .WithOpenApi(); // Enable OpenAPI documentation
+            
 
-            // SQL PUT ENDPOINT
-            app.MapPut("/Todos/{id}", (int id, Todos updatedTodo) => {
-                using var conn = new SqlConnection(connectionString);
-                conn.Open();
+            // Map PUT endpoint to update an existing todo item by its ID
+            app.MapPut("/Todos/{id}", async (int id, UserEntryModel updatedTodo, SqlConnection conn) =>
+            {
+                // Open the SQL connection
+                await conn.OpenAsync();
 
-                var command = new SqlCommand(
-                    "UPDATE Todos SET Title = @Title, IsDone = @IsDone WHERE ID = @ID",
-                    conn);
+                // SQL command to update the title and IsDone status of the specified todo item
+                using var command = new SqlCommand(
+                    "UPDATE Todos SET Title = @Title, IsDone = @IsDone WHERE ID = @ID", conn);
 
-                command.Parameters.AddWithValue("@Title", updatedTodo.Title);
-                command.Parameters.AddWithValue("@IsDone", updatedTodo.IsDone ? "1" : "0");
-                command.Parameters.AddWithValue("@ID", id);
+                // Add parameters for Title, IsDone, and ID
+                command.Parameters.AddWithValue("@Title", updatedTodo.Title); // Bind title
+                command.Parameters.AddWithValue("@IsDone", updatedTodo.IsDone ? 1 : 0); // Bind IsDone status as 1/0
+                command.Parameters.AddWithValue("@ID", id); // Bind ID to identify the row to update
 
-                command.ExecuteNonQuery();
+                // Execute the update command
+                await command.ExecuteNonQueryAsync();
             })
-            .WithName("UpdateTodo")
-            .WithOpenApi();
+            .WithName("UpdateTodo") // Name the API route
+            .WithOpenApi(); // Enable OpenAPI documentation
 
+            // Map the Razor components (UI) and enable both server-side and web assembly rendering modes
             app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode()
-                .AddInteractiveWebAssemblyRenderMode()
-                .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
+                .AddInteractiveServerRenderMode() // Add interactive server rendering
+                .AddInteractiveWebAssemblyRenderMode() // Add interactive WebAssembly rendering
+                .AddAdditionalAssemblies(typeof(Client._Imports).Assembly); // Include additional assemblies for components
 
+            // Run the web application (start the server and handle incoming requests)
             app.Run();
+        }
+
+        // Method to configure middleware, which processes HTTP requests
+        private static void ConfigureMiddleware(WebApplication app)
+        {
+            // Middleware for development environment
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseWebAssemblyDebugging(); // Enable WebAssembly debugging for development
+                app.UseSwagger(); // Enable Swagger for API documentation
+                app.UseSwaggerUI(); // Enable Swagger UI for exploring API documentation
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error"); // Use global error handler for production
+                app.UseHsts(); // Enforce strict HTTPS for production
+            }
+
+            // Middleware to handle HTTP requests
+            app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
+            app.UseStaticFiles(); // Serve static files (like images, CSS, etc.)
+            app.UseAntiforgery(); // Use anti-forgery tokens for form submissions
         }
     }
 }
