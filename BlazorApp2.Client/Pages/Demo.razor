@@ -56,7 +56,7 @@ else
     @code {
     private async Task HandleCheckboxChanged(ChangeEventArgs e, UserEntryModel UserEntry)
     {
-        UserEntry.IsDone = (bool)e.Value; // Update IsDone manually
+        UserEntry.IsDone = (bool)e.Value!; // Update IsDone manually
         await UpdateTodo(UserEntry); // Call the update method
     }
 }
@@ -104,7 +104,7 @@ else
             var UserEntrySubmission = new UserEntryModel { Title = UserInput, IsDone = false };
             try
             {
-                var baseUrl = Http.BaseAddress;
+                var baseUrl = Navigation.BaseUri;
                 // Wait for the response from SQL after posting (directory + table + package) 
                 var response = await Http.PostAsJsonAsync(baseUrl + "Todos", UserEntrySubmission);
                 if (response.IsSuccessStatusCode)
@@ -128,7 +128,7 @@ else
     {
         try
         {
-            var baseUrl = Http.BaseAddress;
+            var baseUrl = Navigation.BaseUri;
             var response = await Http.PutAsJsonAsync($"{baseUrl}Todos/{todo.ID}", todo);
 
             if (!response.IsSuccessStatusCode)
